@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import * as math from 'mathjs';
+import "../Calculator/calculator.css";
 
 function Calculator() {
   const [expression, setExpression] = useState('');
@@ -30,7 +31,6 @@ function Calculator() {
         if (!isNaN(currentValue)) {
           const newMemory = memory + currentValue;
           setMemory(newMemory);
-          setExpression('');
         }
       } catch (error) {
         console.error("Memory add error:", error);
@@ -45,7 +45,6 @@ function Calculator() {
         if (!isNaN(currentValue)) {
           const newMemory = memory - currentValue;
           setMemory(newMemory);
-          setExpression('');
         }
       } catch (error) {
         console.error("Memory subtract error:", error);
@@ -54,7 +53,7 @@ function Calculator() {
   };
 
   const handleMemoryRecall = () => {
-    setExpression(memory.toString());
+    setExpression(expression + memory.toString());
   };
 
   const handleMemoryClear = () => {
@@ -65,46 +64,44 @@ function Calculator() {
     setExpression('');
   };
 
-  
-
   return (
-    <div>
-      <input type="text" value={expression} readOnly />
-      <div>
-        {/* Buttons for basic operations */}
-        <button onClick={() => handleButtonClick('1')}>1</button>
-        <button onClick={() => handleButtonClick('2')}>2</button>
-        <button onClick={() => handleButtonClick('3')}>3</button>
-        <button onClick={() => handleButtonClick('+')}>+</button>
+    <div className='calculator'>
+      <input className='input' type="text" value={expression} readOnly />
+      <div className='button-row'>
+        <button className='button memory' onClick={handleMemoryAdd}>M+</button>
+        <button className='button memory' onClick={handleMemorySubtract}>M-</button>
+        <button className='button memory' onClick={handleMemoryRecall}>MR</button>
+        <button className='button memory' onClick={handleMemoryClear}>MC</button>
       </div>
-      <div>
-        <button onClick={() => handleButtonClick('4')}>4</button>
-        <button onClick={() => handleButtonClick('5')}>5</button>
-        <button onClick={() => handleButtonClick('6')}>6</button>
-        <button onClick={() => handleButtonClick('-')}>-</button>
+      <div className='button-row'>
+        <button className='button' onClick={() => handleButtonClick('1')}>1</button>
+        <button className='button' onClick={() => handleButtonClick('2')}>2</button>
+        <button className='button' onClick={() => handleButtonClick('3')}>3</button>
+        <button className='button operator' onClick={() => handleButtonClick('+')}>+</button>
       </div>
-      <div>
-        <button onClick={() => handleButtonClick('7')}>7</button>
-        <button onClick={() => handleButtonClick('8')}>8</button>
-        <button onClick={() => handleButtonClick('9')}>9</button>
-        <button onClick={() => handleButtonClick('*')}>*</button>
+      <div className='button-row'>
+        <button className='button' onClick={() => handleButtonClick('4')}>4</button>
+        <button className='button' onClick={() => handleButtonClick('5')}>5</button>
+        <button className='button' onClick={() => handleButtonClick('6')}>6</button>
+        <button className='button operator' onClick={() => handleButtonClick('-')}>-</button>
       </div>
-      <div>
-        <button onClick={handleClearInput}>Clear Input</button>
-        <button onClick={() => handleButtonClick('0')}>0</button>
-        <button onClick={() => handleButtonClick('.')}>.</button>
-        <button onClick={() => handleButtonClick('/')}>/</button>
-        <button onClick={handleCalculate}>=</button>
+      <div className='button-row'>
+        <button className='button' onClick={() => handleButtonClick('7')}>7</button>
+        <button className='button' onClick={() => handleButtonClick('8')}>8</button>
+        <button className='button' onClick={() => handleButtonClick('9')}>9</button>
+        <button className='button operator' onClick={() => handleButtonClick('*')}>*</button>
       </div>
-      <div>
-        {/* Memory operations */}
-        <button onClick={handleMemoryAdd}>M+</button>
-        <button onClick={handleMemorySubtract}>M-</button>
-        <button onClick={handleMemoryRecall}>MR</button>
-        <button onClick={handleMemoryClear}>MC</button>
+      <div className='button-row'>
+        <button className='button' onClick={() => handleButtonClick('0')}>0</button>
+        <button className='button' onClick={() => handleButtonClick('.')}>.</button>
+        <button className='button operator' onClick={() => handleButtonClick('/')}>/</button>
+        <button className='button' onClick={handleCalculate}>=</button>
       </div>
-      <div>
-        {/* Display history */}
+      <div className='button-row'>
+        <button className='button clear' onClick={handleClearInput}>Clear</button>
+      </div>
+      <div className='history'>
+        <h3>History</h3>
         <ul>
           {calculationHistory.map((item, index) => (
             <li key={index}>
@@ -116,6 +113,5 @@ function Calculator() {
     </div>
   );
 }
-
 
 export default Calculator;
