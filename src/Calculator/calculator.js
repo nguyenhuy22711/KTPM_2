@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+
+import React, { useEffect, useRef, useState } from 'react';
+
 import * as math from 'mathjs';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 
 function Calculator() {
@@ -110,7 +113,7 @@ function Calculator() {
     setExpression('');
   };
   //+/-
-    const handleToggleSign = () => {
+  const handleToggleSign = () => {
     setExpression((prevExpression) => {
       if (prevExpression.startsWith('-')) {
         return prevExpression.slice(1);
@@ -119,72 +122,90 @@ function Calculator() {
       }
     });
   };
+  /**KIM NGÂNNNN
+   *  phần tính toán + - CE và =   **********/
+  const [input, setInput] = useState('');
+
+  const handleMinus = () => {
+    setInput(input + '-');
+  };
+
+
+  const handleClear = () => {
+    setInput('');
+  };
+
+  /**hàm true false hiển thị danh sách */
+  const [showHistory, setShowHistory] = useState(false);
+
+  const toggleHistory = () => {
+    setShowHistory(!showHistory);
+  };
 
   return (
-    <div className="calculator">
-      <input className="display" type="text" value={expression} readOnly />
-      <div className="buttons">
-        
-        <div>
-        <button onClick={handleMemoryAdd}>M+</button>
-        <button onClick={handleMemorySubtract}>M-</button>
-        <button onClick={handleMemoryRecall}>MR</button>
-        <button onClick={handleMemoryClear}>MC</button>
-        </div>
-        <div>
+    <div className="container calculator">
+      <div className="history" >
+        <i  className="fa-solid fa-list" onClick={toggleHistory}></i>
+        {showHistory && (
+          <div className='historyOpen'>
+            {calculationHistory.map((item, index) => (
+              <li key={index}>
+                {item.expression} = {item.result}
+              </li>
+            ))}
+          </div>
+        )}
+      </div>
 
+      <input className="display" type="text" value={expression} readOnly />
+
+
+      <div class="btn-memory" >
+        <button style={{ backgroundColor: 'white' }} onClick={handleMemoryAdd}>M+</button>
+        <button style={{ backgroundColor: 'white' }} onClick={handleMemorySubtract}>M-</button>
+        <button style={{ backgroundColor: 'white' }} onClick={handleMemoryRecall}>MR</button>
+        <button style={{ backgroundColor: 'white' }} onClick={handleMemoryClear}>MC</button>
+
+      </div>
+
+      <div class="row">
         <button onClick={handlePercentage}>%</button>
         <button onClick={handleClearEntry}>CE</button>
         <button onClick={handleClearInput}>C</button>
-        <button onClick={handleDeleteLastChar}>⌫</button>
-        </div>
-        <div>
+        <button onClick={handleDeleteLastChar}><i class="fa-solid fa-delete-left"></i></button>
+        <button onClick={handleSquare}><i class="fas fa-times"></i><sup>2</sup></button>
+        <button ><i class="fas fa-times"></i><sup>n</sup>  <i className=''></i></button>
+        <button onClick={handleSquareRoot} ><i class="fa-solid fa-square-root-variable"></i></button>
+        <button ><sup>n</sup><i class="fa-solid fa-square-root-variable" ></i></button>
+        <button >|<i class="fas fa-times"></i>|</button>
+        <button >(<i class="fas fa-times"></i>)</button>
         <button onClick={handleInverse}>1/x</button>
-        <button onClick={handleSquare}>x²</button>
-        <button onClick={handleSquareRoot}>√</button>
-        <button onClick={() => handleButtonClick('/')}>/</button>
-        </div>
-        {/* Buttons for basic operations */}
-        <div>
+        <button class="operator"><i class="fa-solid fa-divide"></i></button>
+
         <button onClick={() => handleButtonClick('7')}>7</button>
         <button onClick={() => handleButtonClick('8')}>8</button>
         <button onClick={() => handleButtonClick('9')}>9</button>
-        <button onClick={() => handleButtonClick('*')}>*</button>
-        </div>
+        <button class="operator"><i class="fa-solid fa-xmark"></i></button>
 
-        <div>
         <button onClick={() => handleButtonClick('4')}>4</button>
         <button onClick={() => handleButtonClick('5')}>5</button>
         <button onClick={() => handleButtonClick('6')}>6</button>
-        <button onClick={() => handleButtonClick('-')}>-</button>
-        </div>
+        <button class="operator" onClick={() => handleMinus('-')}><i class="fa-solid fa-minus"></i></button>
 
-        <div>
         <button onClick={() => handleButtonClick('1')}>1</button>
         <button onClick={() => handleButtonClick('2')}>2</button>
         <button onClick={() => handleButtonClick('3')}>3</button>
-        <button onClick={() => handleButtonClick('+')}>+</button>
-        </div>
+        <button class="operator" onClick={() => handleButtonClick('+')}><i class="fa-solid fa-plus"></i></button>
 
-        <div>
-        <button onClick={handleToggleSign}>+/-</button>
         <button onClick={() => handleButtonClick('0')}>0</button>
         <button onClick={() => handleButtonClick('.')}>.</button>
-        <button onClick={handleCalculate}>=</button>
-        </div>
-        {/* Additional functions */}
+        <button onClick={handleCalculate} class="equal">=</button>
+
       </div>
-      {/* Display history */}
-      <div className="history">
-        <ul>
-          {calculationHistory.map((item, index) => (
-            <li key={index}>
-              {item.expression} = {item.result}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+
+
+
+    </div >
   );
 }
 
