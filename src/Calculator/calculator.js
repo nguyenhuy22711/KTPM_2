@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import * as math from 'mathjs';
-import '../App.css';
 
 
 function Calculator() {
@@ -111,7 +110,7 @@ function Calculator() {
     setExpression('');
   };
   //+/-
-  const handleToggleSign = () => {
+    const handleToggleSign = () => {
     setExpression((prevExpression) => {
       if (prevExpression.startsWith('-')) {
         return prevExpression.slice(1);
