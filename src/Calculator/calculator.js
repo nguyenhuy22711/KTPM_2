@@ -1,8 +1,8 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 
-import * as math from 'mathjs';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import * as math from 'mathjs';
 
 
 function Calculator() {
@@ -99,6 +99,15 @@ function Calculator() {
       console.error("Square calculation error:", error);
     }
   };
+
+  const handlePower = () => {
+    try {
+      const result = math.evaluate(`(${expression}) ^ n`);
+      setExpression(result.toString());
+    } catch (error) {
+      console.error("Power calculation error:", error);
+    }
+  };
   //1/x
   const handleInverse = () => {
     try {
@@ -108,33 +117,24 @@ function Calculator() {
       console.error("Inverse calculation error:", error);
     }
   };
-  //CEg
-  const handleClearEntry = () => {
-    setExpression('');
-  };
-  //+/-
-  const handleToggleSign = () => {
-    setExpression((prevExpression) => {
-      if (prevExpression.startsWith('-')) {
-        return prevExpression.slice(1);
-      } else {
-        return '-' + prevExpression;
-      }
-    });
-  };
-  /**KIM NGÂNNNN
-   *  phần tính toán + - CE và =   **********/
-  const [input, setInput] = useState('');
-
-  const handleMinus = () => {
-    setInput(input + '-');
+  
+  
+  const handleAbsoluteValue = () => {
+    try {
+      const result = math.evaluate(`abs(${expression})`);
+      setExpression(result.toString());
+    } catch (error) {
+      console.error("Absolute value calculation error:", error);
+    }
   };
 
-
-  const handleClear = () => {
-    setInput('');
+  const handleParentheses = () => {
+    setExpression(expression + '(');
   };
 
+  const handleClosingParentheses = () => {
+    setExpression(expression + ')');
+  };
   /**hàm true false hiển thị danh sách */
   const [showHistory, setShowHistory] = useState(false);
 
@@ -170,27 +170,27 @@ function Calculator() {
 
       <div class="row">
         <button onClick={handlePercentage}>%</button>
-        <button onClick={handleClearEntry}>CE</button>
-        <button onClick={handleClearInput}>C</button>
+        <button onClick={handleClearInput}>CE</button>
         <button onClick={handleDeleteLastChar}><i class="fa-solid fa-delete-left"></i></button>
         <button onClick={handleSquare}><i class="fas fa-times"></i><sup>2</sup></button>
-        <button ><i class="fas fa-times"></i><sup>n</sup>  <i className=''></i></button>
+        <button onClick={handlePower}><i class="fas fa-times"></i><sup>n</sup>  <i className=''></i></button>
         <button onClick={handleSquareRoot} ><i class="fa-solid fa-square-root-variable"></i></button>
         <button ><sup>n</sup><i class="fa-solid fa-square-root-variable" ></i></button>
-        <button >|<i class="fas fa-times"></i>|</button>
-        <button >(<i class="fas fa-times"></i>)</button>
+        <button onClick={handleAbsoluteValue}>|<i class="fas fa-times"></i>|</button>
+        <button onClick={handleParentheses}>(</button>
+        <button onClick={handleClosingParentheses}>)</button>
         <button onClick={handleInverse}>1/x</button>
-        <button class="operator"><i class="fa-solid fa-divide"></i></button>
+        <button class="operator" onClick={() => handleButtonClick('/')}><i class="fa-solid fa-divide"></i></button>
 
         <button onClick={() => handleButtonClick('7')}>7</button>
         <button onClick={() => handleButtonClick('8')}>8</button>
         <button onClick={() => handleButtonClick('9')}>9</button>
-        <button class="operator"><i class="fa-solid fa-xmark"></i></button>
+        <button class="operator" onClick={() => handleButtonClick('*')}><i class="fa-solid fa-xmark"></i></button>
 
         <button onClick={() => handleButtonClick('4')}>4</button>
         <button onClick={() => handleButtonClick('5')}>5</button>
         <button onClick={() => handleButtonClick('6')}>6</button>
-        <button class="operator" onClick={() => handleMinus('-')}><i class="fa-solid fa-minus"></i></button>
+        <button class="operator" onClick={() => handleButtonClick('-')}><i class="fa-solid fa-minus"></i></button>
 
         <button onClick={() => handleButtonClick('1')}>1</button>
         <button onClick={() => handleButtonClick('2')}>2</button>
