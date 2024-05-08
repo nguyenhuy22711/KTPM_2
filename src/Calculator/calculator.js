@@ -108,7 +108,7 @@ function Calculator() {
       console.error("Inverse calculation error:", error);
     }
   };
-  //CE
+  //CEg
   const handleClearEntry = () => {
     setExpression('');
   };
@@ -145,7 +145,7 @@ function Calculator() {
   return (
     <div className="container calculator">
       <div className="history" >
-        <i  className="fa-solid fa-list" onClick={toggleHistory}></i>
+        <i className="fa-solid fa-list" onClick={toggleHistory}></i>
         {showHistory && (
           <div className='historyOpen'>
             {calculationHistory.map((item, index) => (
