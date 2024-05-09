@@ -9,10 +9,16 @@ function Calculator() {
   const [expression, setExpression] = useState('');
   const [memory, setMemory] = useState(0);
   const [calculationHistory, setCalculationHistory] = useState([]);
-
+  const [power, setPower] = useState('');
   const handleButtonClick = (value) => {
-    setExpression(expression + value);
+    if (value === '^') {
+      setExpression(expression + '^');
+    } else {
+      setExpression(expression + value);
+    }
+    setPower('');
   };
+  
 
   const handleCalculate = () => {
     if (expression.trim() !== '') {
@@ -70,8 +76,14 @@ function Calculator() {
   };
 
   const handleDeleteLastChar = () => {
-    setExpression(expression.slice(0, -1));
+    if (expression.charAt(expression.length - 1) === '^') {
+      setExpression(expression.slice(0, -1));
+    } else {
+      setExpression(expression.slice(0, -1));
+    }
+    setPower('');
   };
+  
 
   const handleSquareRoot = () => {
     try {
@@ -100,14 +112,8 @@ function Calculator() {
     }
   };
 
-  const handlePower = () => {
-    try {
-      const result = math.evaluate(`(${expression}) ^ n`);
-      setExpression(result.toString());
-    } catch (error) {
-      console.error("Power calculation error:", error);
-    }
-  };
+
+  
   //1/x
   const handleInverse = () => {
     try {
@@ -157,7 +163,9 @@ function Calculator() {
         )}
       </div>
 
-      <input className="display" type="text" value={expression} readOnly />
+ <input className="display" type="text" value={expression + power} readOnly />
+
+
 
 
       <div class="btn-memory" >
@@ -173,7 +181,8 @@ function Calculator() {
         <button onClick={handleClearInput}>CE</button>
         <button onClick={handleDeleteLastChar}><i class="fa-solid fa-delete-left"></i></button>
         <button onClick={handleSquare}><i class="fas fa-times"></i><sup>2</sup></button>
-        <button onClick={handlePower}><i class="fas fa-times"></i><sup>n</sup>  <i className=''></i></button>
+        <button onClick={() => handleButtonClick('^')}><i className="fas fa-times"></i><sup>n</sup></button>
+
         <button onClick={handleSquareRoot} ><i class="fa-solid fa-square-root-variable"></i></button>
         <button ><sup>n</sup><i class="fa-solid fa-square-root-variable" ></i></button>
         <button onClick={handleAbsoluteValue}>|<i class="fas fa-times"></i>|</button>
