@@ -6,10 +6,14 @@ import * as math from 'mathjs';
 
 
 function Calculator() {
+  
+  const [currentValue, SetcurrentValue] = useState('');
+
   const [expression, setExpression] = useState('');
   const [memory, setMemory] = useState(0);
   const [calculationHistory, setCalculationHistory] = useState([]);
   const [power, setPower] = useState('');
+
   const handleButtonClick = (value) => {
     if (value === '^') {
       setExpression(expression + '^');
@@ -18,7 +22,7 @@ function Calculator() {
     }
     setPower('');
   };
-  
+
 
   const handleCalculate = () => {
     if (expression.trim() !== '') {
@@ -83,7 +87,7 @@ function Calculator() {
     }
     setPower('');
   };
-  
+
 
   const handleSquareRoot = () => {
     try {
@@ -93,7 +97,7 @@ function Calculator() {
       console.error("Square root error:", error);
     }
   };
-
+//%
   const handlePercentage = () => {
     try {
       const result = math.evaluate(`${expression} / 100`);
@@ -103,17 +107,28 @@ function Calculator() {
     }
   };
   //x²
-  const handleSquare = () => {
-    try {
-      const result = math.evaluate(`(${expression})^2`);
-      setExpression(result.toString());
-    } catch (error) {
-      console.error("Square calculation error:", error);
+
+  const handleSquare = (value) => {
+    if (value === '^2') {
+      const currentExpression = expression.trim();
+      const currentValue = parseFloat(currentExpression);
+
+      if (currentValue < 0) {
+        const squaredValue = Math.pow(currentValue, 2);
+        setExpression('(' + currentExpression + ')^2');
+      } else {
+        setExpression(expression + '^2');
+      }
+    } else {
+      setExpression(expression + value);
     }
+    setPower('');
   };
 
-
   
+
+
+
   //1/x
   const handleInverse = () => {
     try {
@@ -123,8 +138,8 @@ function Calculator() {
       console.error("Inverse calculation error:", error);
     }
   };
-  
-  
+
+
   const handleAbsoluteValue = () => {
     try {
       const result = math.evaluate(`abs(${expression})`);
@@ -153,20 +168,16 @@ function Calculator() {
       <div className="history" >
         <i className="fa-solid fa-list" onClick={toggleHistory}></i>
         {showHistory && (
-          <div className='historyOpen'>
+          <div className='historyOpen' >
             {calculationHistory.map((item, index) => (
-              <li key={index}>
+              <div key={index} style={{ width: 270,textAlign:'left' }}>
                 {item.expression} = {item.result}
-              </li>
+              </div>
             ))}
           </div>
         )}
       </div>
-
- <input className="display" type="text" value={expression + power} readOnly />
-
-
-
+      <input className="display" type="text" value={expression + power } readOnly />
 
       <div class="btn-memory" >
         <button style={{ backgroundColor: 'white' }} onClick={handleMemoryAdd}>M+</button>
@@ -180,7 +191,9 @@ function Calculator() {
         <button onClick={handlePercentage}>%</button>
         <button onClick={handleClearInput}>CE</button>
         <button onClick={handleDeleteLastChar}><i class="fa-solid fa-delete-left"></i></button>
-        <button onClick={handleSquare}><i class="fas fa-times"></i><sup>2</sup></button>
+        <button onClick={() => handleSquare('^2')}><i class="fas fa-times"></i><sup>2</sup></button>
+
+
         <button onClick={() => handleButtonClick('^')}><i className="fas fa-times"></i><sup>n</sup></button>
 
         <button onClick={handleSquareRoot} ><i class="fa-solid fa-square-root-variable"></i></button>

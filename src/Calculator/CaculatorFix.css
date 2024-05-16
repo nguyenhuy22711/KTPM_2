@@ -32,7 +32,10 @@
     height: 35px;
     font-size: 20px;
 }
-
+.historyOpen{
+    overflow-y: auto ;
+    max-height: 100px;
+}
 .calculator .row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
