@@ -1,28 +1,19 @@
-
 import React, { useState } from 'react';
-
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import * as math from 'mathjs';
 
-
 function Calculator() {
-  
-  const [currentValue, SetcurrentValue] = useState('');
-
   const [expression, setExpression] = useState('');
   const [memory, setMemory] = useState(0);
   const [calculationHistory, setCalculationHistory] = useState([]);
-  const [power, setPower] = useState('');
+  const [showHistory, setShowHistory] = useState(false);
+  const [nthRootMode, setNthRootMode] = useState(false);
+  const [nthRootValue, setNthRootValue] = useState('');
+  const [showExpressionInput, setShowExpressionInput] = useState(true); // Thêm state để ẩn hiện dòng input
 
   const handleButtonClick = (value) => {
-    if (value === '^') {
-      setExpression(expression + '^');
-    } else {
-      setExpression(expression + value);
-    }
-    setPower('');
+    setExpression(expression + value);
   };
-
 
   const handleCalculate = () => {
     if (expression.trim() !== '') {
@@ -80,14 +71,8 @@ function Calculator() {
   };
 
   const handleDeleteLastChar = () => {
-    if (expression.charAt(expression.length - 1) === '^') {
-      setExpression(expression.slice(0, -1));
-    } else {
-      setExpression(expression.slice(0, -1));
-    }
-    setPower('');
+    setExpression(expression.slice(0, -1));
   };
-
 
   const handleSquareRoot = () => {
     try {
@@ -97,7 +82,7 @@ function Calculator() {
       console.error("Square root error:", error);
     }
   };
-//%
+
   const handlePercentage = () => {
     try {
       const result = math.evaluate(`${expression} / 100`);
@@ -106,30 +91,16 @@ function Calculator() {
       console.error("Percentage error:", error);
     }
   };
-  //x²
 
-  const handleSquare = (value) => {
-    if (value === '^2') {
-      const currentExpression = expression.trim();
-      const currentValue = parseFloat(currentExpression);
-
-      if (currentValue < 0) {
-        const squaredValue = Math.pow(currentValue, 2);
-        setExpression('(' + currentExpression + ')^2');
-      } else {
-        setExpression(expression + '^2');
-      }
-    } else {
-      setExpression(expression + value);
+  const handleSquare = () => {
+    try {
+      const result = math.evaluate(`${expression}^2`);
+      setExpression(result.toString());
+    } catch (error) {
+      console.error("Square error:", error);
     }
-    setPower('');
   };
 
-  
-
-
-
-  //1/x
   const handleInverse = () => {
     try {
       const result = math.evaluate(`1 / (${expression})`);
@@ -138,7 +109,6 @@ function Calculator() {
       console.error("Inverse calculation error:", error);
     }
   };
-
 
   const handleAbsoluteValue = () => {
     try {
@@ -156,8 +126,31 @@ function Calculator() {
   const handleClosingParentheses = () => {
     setExpression(expression + ')');
   };
-  /**hàm true false hiển thị danh sách */
-  const [showHistory, setShowHistory] = useState(false);
+
+  const handleNthRoot = () => {
+    setNthRootMode(true);
+    setExpression('');
+    setShowExpressionInput(false); // Ẩn dòng input khi nhấn n căng x
+  };
+
+  const handleNthRootCalculate = () => {
+    if (nthRootValue.trim() !== '') {
+      try {
+        const [n, x] = nthRootValue.split(',').map(num => parseFloat(num));
+        if (!isNaN(n) && !isNaN(x)) {
+          const result = math.nthRoot(x, n);
+          const newHistory = [...calculationHistory, { expression: `nthRoot(${x}, ${n})`, result }];
+          setExpression(result.toString());
+          setCalculationHistory(newHistory);
+        }
+      } catch (error) {
+        console.error("Nth root calculation error:", error);
+      }
+      setNthRootMode(false);
+      setNthRootValue('');
+      setShowExpressionInput(true); // Hiện dòng input khi tính toán kết thúc
+    }
+  };
 
   const toggleHistory = () => {
     setShowHistory(!showHistory);
@@ -165,69 +158,78 @@ function Calculator() {
 
   return (
     <div className="container calculator">
-      <div className="history" >
-        <i className="fa-solid fa-list" onClick={toggleHistory}></i>
+      <div className="history">
+        <i style={{ display: "flex" }} className="fa-solid fa-list" onClick={toggleHistory}></i>
         {showHistory && (
-          <div className='historyOpen' >
+          <div className='historyOpen'>
             {calculationHistory.map((item, index) => (
-              <div key={index} style={{ width: 270,textAlign:'left' }}>
+              <div key={index} style={{ width: 270, textAlign: 'left' }}>
                 {item.expression} = {item.result}
               </div>
             ))}
           </div>
         )}
       </div>
-      <input className="display" type="text" value={expression + power } readOnly />
+      {showExpressionInput && ( 
+        <input
+          className="display"
+          type="text"
+          value={nthRootMode ? nthRootValue : expression}
+          readOnly
+        />
+      )}
 
-      <div class="btn-memory" >
-        <button style={{ backgroundColor: 'white' }} onClick={handleMemoryAdd}>M+</button>
-        <button style={{ backgroundColor: 'white' }} onClick={handleMemorySubtract}>M-</button>
-        <button style={{ backgroundColor: 'white' }} onClick={handleMemoryRecall}>MR</button>
-        <button style={{ backgroundColor: 'white' }} onClick={handleMemoryClear}>MC</button>
+      {nthRootMode ? (
+        <div className="nth-root-input">
+          <input
+            type="text"
+            value={nthRootValue}
+            onChange={(e) => setNthRootValue(e.target.value)}
+            placeholder="Nhập n , x :  "
+          />
+          <button onClick={handleNthRootCalculate}>=</button>
+        </div>
+      ) : (
+        <>
+          <div className="btn-memory">
+            <button style={{ backgroundColor: 'white' }} onClick={handleMemoryAdd}>M+</button>
+            <button style={{ backgroundColor: 'white' }} onClick={handleMemorySubtract}>M-</button>
+            <button style={{ backgroundColor: 'white' }} onClick={handleMemoryRecall}>MR</button>
+            <button style={{ backgroundColor: 'white' }} onClick={handleMemoryClear}>MC</button>
+          </div>
 
-      </div>
-
-      <div class="row">
-        <button onClick={handlePercentage}>%</button>
-        <button onClick={handleClearInput}>CE</button>
-        <button onClick={handleDeleteLastChar}><i class="fa-solid fa-delete-left"></i></button>
-        <button onClick={() => handleSquare('^2')}><i class="fas fa-times"></i><sup>2</sup></button>
-
-
-        <button onClick={() => handleButtonClick('^')}><i className="fas fa-times"></i><sup>n</sup></button>
-
-        <button onClick={handleSquareRoot} ><i class="fa-solid fa-square-root-variable"></i></button>
-        <button ><sup>n</sup><i class="fa-solid fa-square-root-variable" ></i></button>
-        <button onClick={handleAbsoluteValue}>|<i class="fas fa-times"></i>|</button>
-        <button onClick={handleParentheses}>(</button>
-        <button onClick={handleClosingParentheses}>)</button>
-        <button onClick={handleInverse}>1/x</button>
-        <button class="operator" onClick={() => handleButtonClick('/')}><i class="fa-solid fa-divide"></i></button>
-
-        <button onClick={() => handleButtonClick('7')}>7</button>
-        <button onClick={() => handleButtonClick('8')}>8</button>
-        <button onClick={() => handleButtonClick('9')}>9</button>
-        <button class="operator" onClick={() => handleButtonClick('*')}><i class="fa-solid fa-xmark"></i></button>
-
-        <button onClick={() => handleButtonClick('4')}>4</button>
-        <button onClick={() => handleButtonClick('5')}>5</button>
-        <button onClick={() => handleButtonClick('6')}>6</button>
-        <button class="operator" onClick={() => handleButtonClick('-')}><i class="fa-solid fa-minus"></i></button>
-
-        <button onClick={() => handleButtonClick('1')}>1</button>
-        <button onClick={() => handleButtonClick('2')}>2</button>
-        <button onClick={() => handleButtonClick('3')}>3</button>
-        <button class="operator" onClick={() => handleButtonClick('+')}><i class="fa-solid fa-plus"></i></button>
-
-        <button onClick={() => handleButtonClick('0')}>0</button>
-        <button onClick={() => handleButtonClick('.')}>.</button>
-        <button onClick={handleCalculate} class="equal">=</button>
-
-      </div>
-
-
-
-    </div >
+          <div className="row">
+            <button onClick={handlePercentage}>%</button>
+            <button onClick={handleClearInput}>CE</button>
+            <button onClick={handleDeleteLastChar}><i className="fa-solid fa-delete-left"></i></button>
+            <button onClick={handleSquare}><i className="fas fa-times"></i><sup>2</sup></button>
+            <button onClick={() => handleButtonClick('^')}><i className="fas fa-times"></i><sup>n</sup></button>
+            <button onClick={handleSquareRoot}><i className="fa-solid fa-square-root-variable"></i></button>
+            <button onClick={handleNthRoot}><sup>n</sup><i className="fa-solid fa-square-root-variable"></i></button>
+            <button onClick={handleAbsoluteValue}>|<i className="fas fa-times"></i>|</button>
+            <button onClick={handleParentheses}>(</button>
+            <button onClick={handleClosingParentheses}>)</button>
+            <button onClick={handleInverse}>1/x</button>
+            <button className="operator" onClick={() => handleButtonClick('/')}><i className="fa-solid fa-divide"></i></button>
+            <button onClick={() => handleButtonClick('7')}>7</button>
+            <button onClick={() => handleButtonClick('8')}>8</button>
+            <button onClick={() => handleButtonClick('9')}>9</button>
+            <button className="operator" onClick={() => handleButtonClick('*')}><i className="fa-solid fa-xmark"></i></button>
+            <button onClick={() => handleButtonClick('4')}>4</button>
+            <button onClick={() => handleButtonClick('5')}>5</button>
+            <button onClick={() => handleButtonClick('6')}>6</button>
+            <button className="operator" onClick={() => handleButtonClick('-')}><i className="fa-solid fa-minus"></i></button>
+            <button onClick={() => handleButtonClick('1')}>1</button>
+            <button onClick={() => handleButtonClick('2')}>2</button>
+            <button onClick={() => handleButtonClick('3')}>3</button>
+            <button className="operator" onClick={() => handleButtonClick('+')}><i className="fa-solid fa-plus"></i></button>
+            <button onClick={() => handleButtonClick('0')}>0</button>
+            <button onClick={() => handleButtonClick('.')}>.</button>
+            <button onClick={handleCalculate} className="equal">=</button>
+          </div>
+        </>
+      )}
+    </div>
   );
 }
 
