@@ -59,8 +59,20 @@ function Calculator() {
   };
 
   const handleMemoryRecall = () => {
-    setExpression(memory.toString());
+    try {
+      // Lấy giá trị từ bộ nhớ và chuyển đổi thành chuỗi
+      const memoryValue = memory.toString();
+  
+      // Thêm giá trị từ bộ nhớ vào biểu thức hiện tại
+      const newExpression = expression + memoryValue;
+      
+      // Cập nhật biểu thức với giá trị từ bộ nhớ
+      setExpression(newExpression);
+    } catch (error) {
+      console.error("Memory recall error:", error);
+    }
   };
+  
 
   const handleMemoryClear = () => {
     setMemory(0);
@@ -76,12 +88,34 @@ function Calculator() {
 
   const handleSquareRoot = () => {
     try {
-      const result = math.evaluate(`sqrt(${expression})`);
-      setExpression(result.toString());
+      // Sử dụng biểu thức chính quy để tìm số hoặc tiểu biểu thức cuối cùng trong chuỗi biểu thức
+      const regex = /(\d+(\.\d+)?|\([\d+\-*/^.\s]+\))$/;
+      const match = expression.match(regex);
+  
+      if (match) {
+        // Lấy phần cuối cùng tìm được
+        const partToEvaluate = match[0];
+        const evaluatedPart = math.evaluate(partToEvaluate);
+  
+        // Đảm bảo phần được đánh giá là một số
+        if (typeof evaluatedPart === 'number' && evaluatedPart >= 0) { // Chỉ tính căn bậc hai của số không âm
+          // Tính căn bậc hai của phần được đánh giá
+          const result = Math.sqrt(evaluatedPart);
+  
+          // Thay thế phần gốc bằng kết quả căn bậc hai trong biểu thức
+          const newExpression = expression.replace(regex, result.toString());
+          setExpression(newExpression);
+        } else {
+          console.error("Square root error: Part to evaluate is not a single non-negative number");
+        }
+      } else {
+        console.error("Square root error: No valid part found to evaluate");
+      }
     } catch (error) {
       console.error("Square root error:", error);
     }
   };
+  
 
   const handlePercentage = () => {
     try {
@@ -94,30 +128,97 @@ function Calculator() {
 
   const handleSquare = () => {
     try {
-      const result = math.evaluate(`${expression}^2`);
-      setExpression(result.toString());
+      // Use a regular expression to match the last number or sub-expression in the expression string
+      const regex = /(\d+(\.\d+)?|\([\d+\-*/^.\s]+\))$/;
+      const match = expression.match(regex);
+  
+      if (match) {
+        // Evaluate the matched part to ensure it's a valid expression
+        const partToSquare = match[0];
+        const evaluatedPart = math.evaluate(partToSquare);
+  
+        // Ensure the evaluated part is a number
+        if (typeof evaluatedPart === 'number') {
+          // Square the evaluated part
+          const squaredPart = evaluatedPart ** 2;
+  
+          // Replace the original part with the squared result in the expression
+          const newExpression = expression.replace(regex, squaredPart.toString());
+          setExpression(newExpression);
+        } else {
+          console.error("Square error: Part to square is not a single number or valid sub-expression");
+        }
+      } else {
+        console.error("Square error: No valid part found to square");
+      }
     } catch (error) {
       console.error("Square error:", error);
     }
   };
+  
 
   const handleInverse = () => {
     try {
-      const result = math.evaluate(`1 / (${expression})`);
-      setExpression(result.toString());
+      // Sử dụng biểu thức chính quy để tìm số hoặc tiểu biểu thức cuối cùng trong chuỗi biểu thức
+      const regex = /(\d+(\.\d+)?|\([\d+\-*/^.\s]+\))$/;
+      const match = expression.match(regex);
+  
+      if (match) {
+        // Đánh giá phần tìm được để đảm bảo nó là một biểu thức hợp lệ
+        const partToEvaluate = match[0];
+        const evaluatedPart = math.evaluate(partToEvaluate);
+  
+        // Đảm bảo phần được đánh giá là một số
+        if (typeof evaluatedPart === 'number') {
+          // Tính giá trị nghịch đảo của phần được đánh giá
+          const reciprocalPart = 1 / evaluatedPart;
+  
+          // Thay thế phần gốc bằng giá trị nghịch đảo trong biểu thức
+          const newExpression = expression.replace(regex, reciprocalPart.toString());
+          setExpression(newExpression);
+        } else {
+          console.error("Reciprocal error: Part to evaluate is not a single number or valid sub-expression");
+        }
+      } else {
+        console.error("Reciprocal error: No valid part found to evaluate");
+      }
     } catch (error) {
-      console.error("Inverse calculation error:", error);
+      console.error("Reciprocal error:", error);
     }
   };
 
   const handleAbsoluteValue = () => {
     try {
-      const result = math.evaluate(`abs(${expression})`);
-      setExpression(result.toString());
+      // Sử dụng biểu thức chính quy để tìm tất cả các số và phép toán trong biểu thức
+      const regex = /(\d+(\.\d+)?|[-+*/()])/g;
+      const matches = expression.match(regex);
+  
+      if (matches) {
+        // Tạo một biến lưu trữ biểu thức mới
+        let newExpression = '';
+  
+        // Duyệt qua từng phần tử trong mảng matches
+        matches.forEach(part => {
+          // Kiểm tra nếu phần tử là một số
+          if (!isNaN(part)) {
+            // Tính giá trị trị tuyệt đối của số và thêm vào biểu thức mới
+            newExpression += Math.abs(parseFloat(part)).toString();
+          } else {
+            // Nếu không phải số, thêm phần tử vào biểu thức mới
+            newExpression += part;
+          }
+        });
+  
+        // Cập nhật biểu thức với giá trị trị tuyệt đối
+        setExpression(newExpression);
+      } else {
+        console.error("Absolute value error: No valid part found to evaluate");
+      }
     } catch (error) {
       console.error("Absolute value calculation error:", error);
     }
   };
+  
 
   const handleParentheses = () => {
     setExpression(expression + '(');
