@@ -189,35 +189,23 @@ function Calculator() {
 
   const handleAbsoluteValue = () => {
     try {
-      // Sử dụng biểu thức chính quy để tìm tất cả các số và phép toán trong biểu thức
-      const regex = /(\d+(\.\d+)?|[-+*/()])/g;
-      const matches = expression.match(regex);
-  
-      if (matches) {
-        // Tạo một biến lưu trữ biểu thức mới
-        let newExpression = '';
-  
-        // Duyệt qua từng phần tử trong mảng matches
-        matches.forEach(part => {
-          // Kiểm tra nếu phần tử là một số
-          if (!isNaN(part)) {
-            // Tính giá trị trị tuyệt đối của số và thêm vào biểu thức mới
-            newExpression += Math.abs(parseFloat(part)).toString();
-          } else {
-            // Nếu không phải số, thêm phần tử vào biểu thức mới
-            newExpression += part;
-          }
-        });
-  
-        // Cập nhật biểu thức với giá trị trị tuyệt đối
-        setExpression(newExpression);
-      } else {
-        console.error("Absolute value error: No valid part found to evaluate");
-      }
+      let sanitizedExpression = expression.replace(/\s+/g, ''); // Remove spaces
+      sanitizedExpression = sanitizedExpression.replace(/(\+|\-)\-/g, '-'); // Replace "+-" with "-"
+      sanitizedExpression = sanitizedExpression.replace(/\-\+/g, '-'); // Replace "-+" with "-"
+      
+      // Find the index of the last occurrence of "-" before the current position
+      const lastMinusIndex = sanitizedExpression.lastIndexOf('-', expression.length - 2);
+      // Find the substring after the last "-" before the current position
+      const partToAbs = sanitizedExpression.substring(lastMinusIndex + 1);
+      // Construct the new expression with abs() applied to the specific part
+      const result = sanitizedExpression.substring(0, lastMinusIndex + 1) + 'abs(' + partToAbs + ')';
+      
+      setExpression(result);
     } catch (error) {
       console.error("Absolute value calculation error:", error);
     }
   };
+  
   
 
   const handleParentheses = () => {
@@ -225,7 +213,14 @@ function Calculator() {
   };
 
   const handleClosingParentheses = () => {
-    setExpression(expression + ')');
+    // Add logic to ensure parentheses are balanced
+    const openParentheses = expression.split('(').length - 1;
+    const closeParentheses = expression.split(')').length - 1;
+    if (openParentheses > closeParentheses) {
+      setExpression(expression + ')');
+    } else {
+      console.warn("No open parenthesis to close");
+    }
   };
 
   const handleNthRoot = () => {
