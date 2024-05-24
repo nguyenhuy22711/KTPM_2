@@ -189,22 +189,31 @@ function Calculator() {
 
   const handleAbsoluteValue = () => {
     try {
-      let sanitizedExpression = expression.replace(/\s+/g, ''); // Remove spaces
-      sanitizedExpression = sanitizedExpression.replace(/(\+|\-)\-/g, '-'); // Replace "+-" with "-"
-      sanitizedExpression = sanitizedExpression.replace(/\-\+/g, '-'); // Replace "-+" with "-"
+      // Removing spaces for consistent processing
+      let sanitizedExpression = expression.replace(/\s+/g, '');
+  
+      // Find the last occurrence of '-' which might indicate a negative number
+      const lastMinusIndex = sanitizedExpression.lastIndexOf('-');
       
-      // Find the index of the last occurrence of "-" before the current position
-      const lastMinusIndex = sanitizedExpression.lastIndexOf('-', expression.length - 2);
-      // Find the substring after the last "-" before the current position
-      const partToAbs = sanitizedExpression.substring(lastMinusIndex + 1);
-      // Construct the new expression with abs() applied to the specific part
-      const result = sanitizedExpression.substring(0, lastMinusIndex + 1) + 'abs(' + partToAbs + ')';
-      
-      setExpression(result);
+      // Check if the last '-' is part of a negative number
+      if (lastMinusIndex !== -1) {
+        // Extract part before the last '-' and the part to be made absolute
+        const partBefore = sanitizedExpression.substring(0, lastMinusIndex);
+        const partToAbs = sanitizedExpression.substring(lastMinusIndex + 1);
+  
+        // Create new expression with abs() applied
+        const result = `${partBefore}abs(-${partToAbs})`;
+        setExpression(result);
+      } else {
+        // If no '-' found, just wrap the whole expression in abs()
+        setExpression(`abs(${sanitizedExpression})`);
+      }
     } catch (error) {
+      setExpression('Error');
       console.error("Absolute value calculation error:", error);
     }
   };
+  
   
   
 
