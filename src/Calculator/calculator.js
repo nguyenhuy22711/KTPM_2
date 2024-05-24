@@ -7,9 +7,6 @@ function Calculator() {
   const [memory, setMemory] = useState(0);
   const [calculationHistory, setCalculationHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
-  const [nthRootMode, setNthRootMode] = useState(false);
-  const [nthRootValue, setNthRootValue] = useState('');
-  const [showExpressionInput, setShowExpressionInput] = useState(true); // Thêm state để ẩn hiện dòng input
 
   const handleButtonClick = (value) => {
     setExpression(expression + value);
@@ -232,30 +229,7 @@ function Calculator() {
     }
   };
 
-  const handleNthRoot = () => {
-    setNthRootMode(true);
-    setExpression('');
-    setShowExpressionInput(false); // Ẩn dòng input khi nhấn n căng x
-  };
-
-  const handleNthRootCalculate = () => {
-    if (nthRootValue.trim() !== '') {
-      try {
-        const [n, x] = nthRootValue.split(',').map(num => parseFloat(num));
-        if (!isNaN(n) && !isNaN(x)) {
-          const result = math.nthRoot(x, n);
-          const newHistory = [...calculationHistory, { expression: `nthRoot(${x}, ${n})`, result }];
-          setExpression(result.toString());
-          setCalculationHistory(newHistory);
-        }
-      } catch (error) {
-        console.error("Nth root calculation error:", error);
-      }
-      setNthRootMode(false);
-      setNthRootValue('');
-      setShowExpressionInput(true); // Hiện dòng input khi tính toán kết thúc
-    }
-  };
+  
 
   const toggleHistory = () => {
     setShowHistory(!showHistory);
@@ -275,26 +249,13 @@ function Calculator() {
           </div>
         )}
       </div>
-      {showExpressionInput && ( 
         <input
           className="display"
           type="text"
-          value={nthRootMode ? nthRootValue : expression}
+          value={expression}
           readOnly
         />
-      )}
 
-      {nthRootMode ? (
-        <div className="nth-root-input">
-          <input
-            type="text"
-            value={nthRootValue}
-            onChange={(e) => setNthRootValue(e.target.value)}
-            placeholder="Nhập n , x :  "
-          />
-          <button onClick={handleNthRootCalculate}>=</button>
-        </div>
-      ) : (
         <>
           <div className="btn-memory">
             <button style={{ backgroundColor: 'white' }} onClick={handleMemoryAdd}>M+</button>
@@ -310,30 +271,28 @@ function Calculator() {
             <button onClick={handleSquare}><i className="fas fa-times"></i><sup>2</sup></button>
             <button onClick={() => handleButtonClick('^')}><i className="fas fa-times"></i><sup>n</sup></button>
             <button onClick={handleSquareRoot}><i className="fa-solid fa-square-root-variable"></i></button>
-            <button onClick={handleNthRoot}><sup>n</sup><i className="fa-solid fa-square-root-variable"></i></button>
             <button onClick={handleAbsoluteValue}>|<i className="fas fa-times"></i>|</button>
             <button onClick={handleParentheses}>(</button>
             <button onClick={handleClosingParentheses}>)</button>
             <button onClick={handleInverse}>1/x</button>
-            <button className="operator" onClick={() => handleButtonClick('/')}><i className="fa-solid fa-divide"></i></button>
-            <button onClick={() => handleButtonClick('7')}>7</button>
-            <button onClick={() => handleButtonClick('8')}>8</button>
             <button onClick={() => handleButtonClick('9')}>9</button>
-            <button className="operator" onClick={() => handleButtonClick('*')}><i className="fa-solid fa-xmark"></i></button>
-            <button onClick={() => handleButtonClick('4')}>4</button>
-            <button onClick={() => handleButtonClick('5')}>5</button>
+            <button onClick={() => handleButtonClick('8')}>8</button>
+            <button onClick={() => handleButtonClick('7')}>7</button>
             <button onClick={() => handleButtonClick('6')}>6</button>
-            <button className="operator" onClick={() => handleButtonClick('-')}><i className="fa-solid fa-minus"></i></button>
-            <button onClick={() => handleButtonClick('1')}>1</button>
-            <button onClick={() => handleButtonClick('2')}>2</button>
+            <button onClick={() => handleButtonClick('5')}>5</button>
+            <button onClick={() => handleButtonClick('4')}>4</button>
             <button onClick={() => handleButtonClick('3')}>3</button>
-            <button className="operator" onClick={() => handleButtonClick('+')}><i className="fa-solid fa-plus"></i></button>
+            <button onClick={() => handleButtonClick('2')}>2</button>
+            <button onClick={() => handleButtonClick('1')}>1</button>
             <button onClick={() => handleButtonClick('0')}>0</button>
+            <button className="operator" onClick={() => handleButtonClick('-')}><i className="fa-solid fa-minus"></i></button>
+            <button className="operator" onClick={() => handleButtonClick('+')}><i className="fa-solid fa-plus"></i></button>
+            <button className="operator" onClick={() => handleButtonClick('/')}><i className="fa-solid fa-divide"></i></button>
+            <button className="operator" onClick={() => handleButtonClick('*')}><i className="fa-solid fa-xmark"></i></button>
             <button onClick={() => handleButtonClick('.')}>.</button>
             <button onClick={handleCalculate} className="equal">=</button>
           </div>
         </>
-      )}
     </div>
   );
 }
