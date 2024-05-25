@@ -265,30 +265,40 @@ function Calculator() {
           </div>
 
           <div className="row">
-            <button onClick={handlePercentage}>%</button>
+          <button onClick={handlePercentage}>%</button>
+          <button onClick={handleSquare}><i className="fas fa-times"></i><sup>2</sup></button>
+
             <button onClick={handleClearInput}>CE</button>
             <button onClick={handleDeleteLastChar}><i className="fa-solid fa-delete-left"></i></button>
-            <button onClick={handleSquare}><i className="fas fa-times"></i><sup>2</sup></button>
             <button onClick={() => handleButtonClick('^')}><i className="fas fa-times"></i><sup>n</sup></button>
             <button onClick={handleSquareRoot}><i className="fa-solid fa-square-root-variable"></i></button>
-            <button onClick={handleAbsoluteValue}>|<i className="fas fa-times"></i>|</button>
+          <button onClick={handleAbsoluteValue}>|<i className="fas fa-times"></i>|</button>
+          <button onClick={handleInverse}>1/x</button>
+
             <button onClick={handleParentheses}>(</button>
             <button onClick={handleClosingParentheses}>)</button>
-            <button onClick={handleInverse}>1/x</button>
-            <button onClick={() => handleButtonClick('9')}>9</button>
-            <button onClick={() => handleButtonClick('8')}>8</button>
-            <button onClick={() => handleButtonClick('7')}>7</button>
-            <button onClick={() => handleButtonClick('6')}>6</button>
-            <button onClick={() => handleButtonClick('5')}>5</button>
-            <button onClick={() => handleButtonClick('4')}>4</button>
-            <button onClick={() => handleButtonClick('3')}>3</button>
-            <button onClick={() => handleButtonClick('2')}>2</button>
-            <button onClick={() => handleButtonClick('1')}>1</button>
-            <button onClick={() => handleButtonClick('0')}>0</button>
-            <button className="operator" onClick={() => handleButtonClick('-')}><i className="fa-solid fa-minus"></i></button>
+          <button onClick={() => handleButtonClick('0')}>0</button>
+
+          <button className="operator" onClick={() => handleButtonClick('/')}><i className="fa-solid fa-divide"></i></button>
+
+          <button onClick={() => handleButtonClick('7')}>7</button>
+          <button onClick={() => handleButtonClick('8')}>8</button>
+          <button onClick={() => handleButtonClick('9')}>9</button>
+
+
+          <button className="operator" onClick={() => handleButtonClick('*')}><i className="fa-solid fa-xmark"></i></button>
+
+          <button onClick={() => handleButtonClick('4')}>4</button>
+          <button onClick={() => handleButtonClick('5')}>5</button>
+          <button onClick={() => handleButtonClick('6')}>6</button>
+
+          <button className="operator" onClick={() => handleButtonClick('-')}><i className="fa-solid fa-minus"></i></button>
+          <button onClick={() => handleButtonClick('1')}>1</button>
+
+          <button onClick={() => handleButtonClick('2')}>2</button>
+          <button onClick={() => handleButtonClick('3')}>3</button>
+
             <button className="operator" onClick={() => handleButtonClick('+')}><i className="fa-solid fa-plus"></i></button>
-            <button className="operator" onClick={() => handleButtonClick('/')}><i className="fa-solid fa-divide"></i></button>
-            <button className="operator" onClick={() => handleButtonClick('*')}><i className="fa-solid fa-xmark"></i></button>
             <button onClick={() => handleButtonClick('.')}>.</button>
             <button onClick={handleCalculate} className="equal">=</button>
           </div>
